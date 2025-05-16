@@ -517,26 +517,26 @@
 <body>
   <nav class="navbar navbar-expand-md navbar-dark custom-navbar fixed-top">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#"><img src="/img/Logo.png" alt=""></a>
+      <a class="navbar-brand" href="#"><img src="img/Logo.png" alt=""></a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item me-4">
-            <a class="nav-link" href="/index.html"><span class="icon"><img src="/img/Home Logo.png" alt=""></span> Home</a>
+            <a class="nav-link" href="../index.html"><span class="icon"><img src="img/Home Logo.png" alt=""></span> Home</a>
           </li>
           <li class="nav-item me-4">
-            <a class="nav-link active" aria-current="page" href="/html/abouts.html"><span class="icon"><img src="/img/About logo.png" alt=""></span> About</a>
+            <a class="nav-link active" aria-current="page" href="../html/abouts.html"><span class="icon"><img src="img/About logo.png" alt=""></span> About</a>
           </li>
           <li class="nav-item me-4">
-            <a class="nav-link" href="/html/feats.html"><span class="icon"><img src="/img/Feats logo.png" alt=""></span> Feats</a>
+            <a class="nav-link" href="../html/feats.html"><span class="icon"><img src="img/Feats logo.png" alt=""></span> Feats</a>
           </li>
           <li class="nav-item me-4">
-            <a class="nav-link" href="/html/projects.html"><span class="icon"><img src="/img/Projects logo.png" alt=""></span> Projects</a>
+            <a class="nav-link" href="../html/projects.html"><span class="icon"><img src="img/Projects logo.png" alt=""></span> Projects</a>
           </li>
           <li class="nav-item me-4">
-            <a class="nav-link" href="/html/contact.html"><span class="icon"><img src="/img/Contact logo.png" alt=""></span> Contact</a>
+            <a class="nav-link" href="../html/contact.html"><span class="icon"><img src="img/Contact logo.png" alt=""></span> Contact</a>
           </li>
         </ul>
       </div>
@@ -546,7 +546,7 @@
   <div class="layout">
     <div class="row1">
       <div class="character-container" id="char">
-        <img src="/img/About Us R.png" alt="Character" />
+        <img src="img/About Us R.png" alt="Character" />
         <div class="eye" id="eye-left">
           <div class="glint"></div>
         </div>
@@ -564,7 +564,7 @@
           <div class="card-container" id="container1">
             <div class="card active" id="c1_1">
               <div class="card-front">
-                <img src="/img/Hobbies.png" alt="Card1 Front">
+                <img src="img/Hobbies.png" alt="Card1 Front">
                 <div class="card-controls">
                   <button class="ghost-btn" id="p1_1"></button>
                   <button class="ghost-btn active" id="n1_1"></button>
@@ -576,7 +576,7 @@
             </div>
             <div class="card" id="c1_2">
               <div class="card-front">
-                <img src="/img/Interests.png" alt="Card1 Back">
+                <img src="img/Interests.png" alt="Card1 Back">
                 <div class="card-controls">
                   <button class="ghost-btn active" id="p1_2"></button>
                   <button class="ghost-btn" id="n1_2"></button>
@@ -592,7 +592,7 @@
           <div class="card-container" id="container2">
             <div class="card active" id="c2_1">
               <div class="card-front">
-                <img src="/img/Skills.png" alt="Card2 Front">
+                <img src="img/Skills.png" alt="Card2 Front">
                 <div class="card-controls">
                   <button class="ghost-btn" id="p2_1"></button>
                   <button class="ghost-btn active" id="n2_1"></button>
@@ -604,7 +604,7 @@
             </div>
             <div class="card" id="c2_2">
               <div class="card-front">
-                <img src="/img/Goals.png" alt="Card2 Back">
+                <img src="img/Goals.png" alt="Card2 Back">
                 <div class="card-controls">
                   <button class="ghost-btn active" id="p2_2"></button>
                   <button class="ghost-btn" id="n2_2"></button>
@@ -621,7 +621,7 @@
       <div class="traits-container">
         <h1>Trait Meter</h1>
         <div class="trait" data-progress="85%">
-          <div class="logo"><img src="/img/communication.png" alt="Communication logo" /></div>
+          <div class="logo"><img src="img/communication.png" alt="Communication logo" /></div>
           <div class="meter-wrapper">
             <h3 class="meter-title">Communication</h3>
             <div class="meter">
@@ -630,7 +630,7 @@
           </div>
         </div>
         <div class="trait" data-progress="75%">
-          <div class="logo"><img src="/img/creativity.png" alt="Creativity logo" /></div>
+          <div class="logo"><img src="img/creativity.png" alt="Creativity logo" /></div>
           <div class="meter-wrapper">
             <h3 class="meter-title">Creativity</h3>
             <div class="meter">
@@ -639,7 +639,7 @@
           </div>
         </div>
         <div class="trait" data-progress="90%">
-          <div class="logo"><img src="/img/analytical.png" alt="Analytical logo" /></div>
+          <div class="logo"><img src="img/analytical.png" alt="Analytical logo" /></div>
           <div class="meter-wrapper">
             <h3 class="meter-title">Analytical</h3>
             <div class="meter">
@@ -663,7 +663,7 @@
   </script>
 
   <script>
-    fetch('cursor.html')
+    fetch('../html/cursor.html')
       .then(r => r.text())
       .then(html => {
         const container = document.getElementById('cursor-container');
