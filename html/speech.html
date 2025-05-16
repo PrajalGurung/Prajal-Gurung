@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Responsive Speech Bubble</title>
+  <style>
+    /* Container fills viewport and centers content */
+    .speech {
+      height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      /* Base font-size adjusts with viewport width */
+      font-family: cursive;
+    }
+
+    .speech p {
+      position: relative;
+      display: inline-block;
+      /* Text styling */
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 0.1em;
+      /* Responsive font-size with clamp(min, ideal, max) */
+      font-size: clamp(1rem, 2.5vw, 2.5rem);
+      /* Background & blend */
+      color: #774f38;
+      background-color: #f5f7dc;
+      mix-blend-mode: multiply;
+      /* Responsive padding */
+      padding: clamp(0.5rem, 2vw, 3rem);
+      border-radius: 1rem;
+      /* Responsive box-shadow */
+      box-shadow: 
+        clamp(100rem, 100vw, 200rem) 
+        clamp(0.5rem, 1vw, 2rem) 
+        #b5d99c;
+      /* Float animation */
+      animation: float 5s ease-in-out infinite;
+    }
+
+    /* The little “tail” dot */
+    .speech p::after {
+      content: "";
+      position: absolute;
+      bottom: -clamp(0.5rem, 1vw, 2rem);
+      left: 1rem;
+      /* Creates a circle */
+      width: clamp(1rem, 2vw, 2rem);
+      height: clamp(1rem, 2vw, 2rem);
+      background-color: #f5f7dc;
+      border-radius: 50%;
+      box-shadow: 
+        clamp(1rem, 2vw, 4rem) 
+        clamp(1rem, 2vw, 4rem) 
+        #b5d99c;
+      animation: float2 5s ease-in-out infinite;
+    }
+
+    /* Floating animations */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50%      { transform: translateY(-1.25rem); }
+    }
+    @keyframes float2 {
+      0%, 100% {
+        transform: translateY(0);
+        /* keep circle shape */
+        border-radius: 50%;
+      }
+      50% {
+        transform: translateY(-1.25rem);
+        /* flatten it mid‑motion */
+        border-radius: 20%;
+      }
+    }
+
+    /* Media query for very narrow screens */
+    @media (max-width: 400px) {
+      .speech p {
+        letter-spacing: 0.05em;
+        padding: 1rem;
+      }
+
+    }
+  </style>
+</head>
+<body>
+  <div class="speech"></div>
+
+  <script>
+    // Insert the bubble text
+    document.querySelector(".speech")
+      .insertAdjacentHTML("afterbegin",
+        '<p>Hello Heekkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkheh</p>');
+  </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Custom Cursor</title>
+	<style>
+		/* Hide the native cursor everywhere */
+		*,
+		*::before,
+		*::after {
+			cursor: none !important;
+		}
+
+		/* Custom cursor container */
+		.custom-cursor {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			border: 2px solid #ad5045;
+			transform: translate(-50%, -50%);
+			pointer-events: none;
+			z-index: 9999;
+		}
+
+		/* Inner dot */
+		.custom-cursor .pointer {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 5px;
+			height: 5px;
+			border-radius: 50%;
+			background-color: #356a9f;
+			transform: translate(-50%, -50%);
+			transition: width 0.1s ease-in-out,
+				height 0.1s ease-in-out;
+		}
+
+		/* Expand on click */
+		.custom-cursor.active .pointer {
+			width: 20px;
+			height: 20px;
+		}
+
+	</style>
+</head>
+
+<body>
+	<!-- Your page content goes here -->
+
+	<!-- Custom Cursor Element -->
+	<div class="custom-cursor">
+		<div class="pointer"></div>
+	</div>
+
+	<script>
+		(function () {
+			const cursor = document.querySelector('.custom-cursor');
+			// Always visible
+			cursor.style.display = 'block';
+
+			// Move cursor on mousemove
+			document.addEventListener('mousemove', e => {
+				cursor.style.left = e.clientX + 'px';
+				cursor.style.top = e.clientY + 'px';
+			});
+
+			// Click feedback
+			document.addEventListener('mousedown', () => {
+				cursor.classList.add('active');
+			});
+			document.addEventListener('mouseup', () => {
+				cursor.classList.remove('active');
+			});
+		})();
+	</script>
+</body>
+
+</html>

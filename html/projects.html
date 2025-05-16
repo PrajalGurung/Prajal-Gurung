@@ -1,0 +1,817 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Project Slider</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #D9D9D9;
+      margin: 0;
+      padding: 0;
+    }
+    .navbar-brand img{
+      width:40px;
+      height: auto;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      margin-top: 50px;
+      margin-left: 50px;
+    }
+
+    .slider-nav {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .slider-nav button {
+      padding: 10px 20px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .slider-nav button:hover {
+      background: #0056b3;
+    }
+
+    .projects-wrapper {
+      width: 100%;
+      overflow: hidden;
+      position: relative;
+      height: 400px;
+      /* Adjust as needed */
+    }
+
+    .projects-container {
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.5s ease-in-out;
+    }
+
+    .project-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1;
+      flex-shrink: 0;
+    }
+
+    .project-card:hover {
+      transform: scale(1.05);
+    }
+
+    /* Fullscreen Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+      background: white;
+      overflow: hidden;
+      
+   z-index: 1050; 
+      transition: all 0.5s ease;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+    }
+
+    .overlay.active {
+      width: 100%;
+      height: 100%;
+      opacity: 1;
+      border-radius: 0;
+    }
+
+    .overlay-content {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.3s ease 0.2s, transform 0.3s ease 0.2s;
+      padding: 20px;
+    }
+
+    .overlay.active .overlay-content {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Ghost nav inside overlay */
+    .overlay-nav {
+      position: absolute;
+      top: 50%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      pointer-events: none;
+      /* allow clicks only on buttons */
+    }
+
+    .overlay-nav button {
+      pointer-events: all;
+      background: transparent;
+      border: 2px solid rgba(0, 0, 0, 0.5);
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 24px;
+      padding: 10px 15px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .overlay-nav button:hover {
+      border-color: rgba(0, 0, 0, 0.8);
+      color: rgba(0, 0, 0, 0.8);
+    }
+
+    /* Slide‑in animations */
+    @keyframes slideInFromLeft {
+      from {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideInFromRight {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    /* Utility classes to trigger the slide */
+    .slide-from-left {
+      animation: slideInFromLeft 0.4s ease forwards;
+    }
+
+    .slide-from-right {
+      animation: slideInFromRight 0.4s ease forwards;
+    }
+
+    /* Pinch content between ghost buttons */
+    /* assume ghost buttons ~60px total each side */
+    .overlay-body {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 60px;
+      /* same as overlay-nav button width + margin */
+      right: 60px;
+      /* match left */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* media (40%) + details (60%) */
+    .overlay-media,
+    .overlay-details {
+      height: 80%;
+      /* 10% gap top + bottom */
+    }
+
+    .overlay-media {
+      flex: 0 0 40%;
+      /* fixed 40% width */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .overlay-media img {
+      max-height: 100%;
+      width: auto;
+      border-radius: 8px;
+    }
+
+    .overlay-details {
+      flex: 0 0 60%;
+      /* fixed 60% width */
+      padding-left: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* header with logo + title */
+    .details-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .details-logo {
+      height: 40px;
+      margin-right: 12px;
+    }
+
+    /* text area scroll if needed */
+    .details-text {
+      overflow-y: auto;
+      flex-grow: 1;
+      margin-bottom: 10px;
+    }
+
+    /* footer links */
+    .details-links {
+      display: flex;
+      justify-content: flex-start;
+      gap: 12px;
+    }
+
+    .details-links img {
+      height: 32px;
+      width: auto;
+      cursor: pointer;
+    }
+
+    /* Container holding the character */
+    .character-container {
+      position: absolute;
+      Right: 150px;
+      top: 70%;
+      transform: translateY(-50%);
+      width: 300px;
+      /* adjust to your image width */
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Base character image */
+    .character-container img {
+      display: block;
+      width: 80%;
+      height: auto;
+    }
+
+    /* The two pupils (with built-in white glint) */
+    .eye {
+      position: absolute;
+      width: 17.5px;
+      /* pupil diameter */
+      height: 19.5px;
+      background: black;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      overflow: hidden;
+      /* clip the glint inside */
+    }
+
+    /* the tiny white “sclera”/glint inside each pupil */
+    .eye .glint {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      /* position it in the upper-left corner of the pupil */
+      top: 3px;
+      left: 3px;
+    }
+
+    /* Position pupils over the character – tweak these */
+    #eye-left {
+      left: 75px;
+      top: 116px;
+    }
+
+    #eye-right {
+      left: 135px;
+      top: 120px;
+    }
+
+    .speech {
+      position: absolute;
+      top: -50%;
+      /* adjust vertical placement relative to .character-container */
+      right: 100px;
+      /* adjust horizontal placement beside the character */
+      width: 400px;
+      height: 100px;
+      /* fixed height for up to two lines + padding */
+      overflow: visible;
+      /* allow shadows/tails to show */
+      margin: 0;
+      /* reset */
+      /* removed display, place-items, and transform */
+    }
+
+    .speech p {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+
+      mix-blend-mode: multiply;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: bold;
+      letter-spacing: 3px;
+      font-size: 15px;
+      line-height: 1.2em;
+      /* ensures two lines fit nicely */
+      color: #19110c;
+      background-color: #f5f7dc;
+      border-radius: 11px;
+      box-shadow: 10px 10px #b5d99c;
+      font-family: cursive;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .speech p::after {
+      transform: translateY(0px);
+      content: ".";
+      font-weight: bold;
+      -webkit-text-fill-color: #f5f7dc;
+      text-shadow: 22px 22px #b5d99c;
+      text-align: left;
+      font-size: 55px;
+      width: 55px;
+      height: 11px;
+      line-height: 30px;
+      border-radius: 11px;
+      background-color: #f5f7dc;
+      position: absolute;
+      display: block;
+      bottom: -30px;
+      left: 0;
+      box-shadow: 22px 22px #b5d99c;
+      z-index: -2;
+      animation: float2 5s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0px);
+      }
+
+      50% {
+        transform: translateY(-20px);
+      }
+
+      100% {
+        transform: translateY(0px);
+      }
+    }
+
+    @keyframes float2 {
+      0% {
+        line-height: 30px;
+        transform: translateY(0px);
+      }
+
+      55% {
+        transform: translateY(-20px);
+      }
+
+      60% {
+        line-height: 10px;
+      }
+
+      100% {
+        line-height: 30px;
+        transform: translateY(0px);
+      }
+    }
+
+
+    @media (max-width: 950px) {
+
+      /* Stack the main container and the character, center both */
+      .container {
+        position: relative;
+        /* take them out of absolute flow */
+        transform: none;
+        margin-bottom: none;
+        /* reset any centering transforms */
+        margin: auto;
+        /* vertical spacing & horizontal centering */
+        /* or any width that works for you */
+      }
+
+      .character-container {
+        top: 150px;
+        position: relative;
+        /* take them out of absolute flow */
+        transform: none;
+        /* reset any centering transforms */
+        margin: auto;
+        /* vertical spacing & horizontal centering */
+        /* or any width that works for you */
+      }
+
+
+      @media (max-width: 600px) {
+        .slider-nav button {
+          padding: 8px 15px;
+          font-size: 14px;
+        }
+
+        .projects-wrapper {
+          height: 300px;
+        }
+      }
+    }
+     /* Custom navbar background color */
+    .custom-navbar {
+      background-color: #171717;
+    }
+
+    /* Style for nav links with radius and transparent border */
+    .nav-link {
+      border-radius: 5px;
+      border: 2px solid transparent;
+
+    }
+    .nav-link img{
+      width: 20px;
+      height: 20px;
+    }
+    .navbar-brand{
+      margin-left: 100px;
+      margin-right: 400px;
+    }
+
+    /* Hover effect for nav links */
+    .nav-link:hover {
+      color: #fff;
+      background-color: #B53E25;
+    }
+
+    /* Active state for nav links */
+    .nav-link.active {
+      color: #fff;
+      background-color: #7A2B19;
+      border-color: #5BB3FF;
+    }
+
+    /* Evenly distribute nav items on larger screens */
+    @media (min-width: 768px) {
+      .navbar-nav {
+        justify-content: space-around;
+      }
+    }
+
+    /* Sidebar behavior on small screens */
+    @media (max-width: 767.98px) {
+      .navbar-collapse {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        height: 100%;
+        background-color: #171717; /* Matches custom navbar */
+        overflow-y: auto;
+        transition: transform 0.3s ease-in-out;
+        transform: translateX(-250px);
+      }
+      .navbar-collapse.show {
+        transform: translateX(0);
+      }
+    }
+
+    /* Spacing for icons */
+    .icon {
+      margin-right: 10px;
+    }
+
+    /* Blur effect on main content when menu is open */
+    .menu-open #main-content {
+      filter: blur(5px);
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark custom-navbar fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#"><img src="/img/Logo.png" alt=""></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item me-4">
+            <a class="nav-link" href="/index.html"><span class="icon"><img src="/img/Home Logo.png" alt=""></span> Home</a>
+          </li>
+          <li class="nav-item me-4">
+            <a class="nav-link"><span class="icon"><img src="/img/About logo.png" alt=""></span> About</a>
+          </li>
+          <li class="nav-item me-4">
+            <a class="nav-link" href="/html/feats.html"><span class="icon"><img src="/img/Feats logo.png" alt=""></span> Feats</a>
+          </li>
+          <li class="nav-item me-4">
+            <a class="nav-link active" aria-current="page" href="/html/projects.html"><span class="icon"><img src="/img/Projects logo.png" alt=""></span> Projects</a>
+          </li>
+          <li class="nav-item me-4">
+            <a class="nav-link" href="/html/contact.html"><span class="icon"><img src="/img/Contact logo.png" alt=""></span> Contact</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <div id="cursor-container"></div>
+  <div class="container">
+    <div class="slider-nav">
+      <button id="prevBtn">Prev</button>
+      <button id="nextBtn">Next</button>
+    </div>
+
+    <div class="projects-wrapper">
+      <div class="projects-container" id="projectsContainer">
+        <div class="project-card" data-index="0">
+          <h3>Project 1</h3>
+          <p>Click to view details</p>
+        </div>
+        <div class="project-card" data-index="1">
+          <h3>Project 2</h3>
+          <p>Click to view details</p>
+        </div>
+        <div class="project-card" data-index="2">
+          <h3>Project 3</h3>
+          <p>Click to view details</p>
+        </div>
+        <div class="project-card" data-index="3">
+          <h3>Project 4</h3>
+          <p>Click to view details</p>
+        </div>
+        <div class="project-card" data-index="4">
+          <h3>Project 5</h3>
+          <p>Click to view details</p>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- Fullscreen Overlay -->
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-nav">
+      <button id="overlayPrev">❮</button>
+      <button id="overlayNext">❯</button>
+    </div>
+    <div class="overlay-body">
+      <span class="close-btn" id="closeBtn">&times;</span>
+      <div class="overlay-media">
+        <img id="overlayImg" src="…" alt="Project screenshot">
+      </div>
+      <div class="overlay-details">
+        <header class="details-header">
+          <img class="details-logo" src="logo.png" alt="Logo">
+          <h2 id="overlayTitle">Project Title</h2>
+        </header>
+        <div class="details-text" id="overlayDescription">
+          <!-- descriptive paragraphs here -->
+        </div>
+        <footer class="details-links">
+          <a href="#"><img src="icon1.png" alt="Link1"></a>
+          <a href="#"><img src="icon2.png" alt="Link2"></a>
+          <a href="#"><img src="icon3.png" alt="Link3"></a>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="character-container" id="char">
+    <img src="/img/Projects Mascot.png" alt="Character" />
+    <div class="eye" id="eye-left">
+      <div class="glint"></div>
+    </div>
+    <div class="eye" id="eye-right">
+      <div class="glint"></div>
+    </div>
+    <div class="speech"></div>
+  </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+  <script>
+    // Custom JS to add/remove blur effect
+    const navbarNav = document.getElementById('navbarNav');
+    navbarNav.addEventListener('show.bs.collapse', function () {
+      document.body.classList.add('menu-open');
+    });
+    navbarNav.addEventListener('hide.bs.collapse', function () {
+      document.body.classList.remove('menu-open');
+    });
+  </script>
+
+  <script>
+
+    // load cursor *and* execute its script
+    fetch('cursor.html')
+      .then(r => r.text())
+      .then(html => {
+        const container = document.getElementById('cursor-container');
+        container.innerHTML = html;
+
+        // Find any <script> tags in the fetched HTML and run them
+        container.querySelectorAll('script').forEach(oldScript => {
+          const s = document.createElement('script');
+          s.textContent = oldScript.textContent;
+          document.body.appendChild(s);
+        });
+      })
+      .catch(err => console.error('Error loading cursor:', err));
+
+    const projectsContainer = document.getElementById('projectsContainer');
+    const projectCards = document.querySelectorAll('.project-card');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const overlay = document.getElementById('overlay');
+    const closeBtn = document.getElementById('closeBtn');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayDescription = document.getElementById('overlayDescription');
+
+    let currentIndex = 0;
+    const cardHeight = 140; // Approx height + margin (adjust if needed)
+
+    function updateSlider() {
+      projectsContainer.style.transform = `translateY(-${currentIndex * cardHeight}px)`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlider();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < projectCards.length - 1) {
+        currentIndex++;
+        updateSlider();
+      }
+    });
+
+    projectCards.forEach(card => {
+      card.addEventListener('click', () => {
+        openOverlay(+card.dataset.index, 'right');
+      });
+
+    });
+
+    closeBtn.addEventListener('click', () => {
+      overlay.classList.remove('active');
+    });
+    const overlayPrev = document.getElementById('overlayPrev');
+    const overlayNext = document.getElementById('overlayNext');
+
+
+    function openOverlay(index, direction) {
+      const card = projectCards[index];
+      overlayTitle.textContent = card.querySelector('h3').textContent;
+      overlayDescription.textContent = `Details for ${overlayTitle.textContent}.`;
+      document.getElementById('overlayImg')
+        .src = card.dataset.imgSrc || 'default.png';
+
+      // 1) reset any existing slide classes
+      const content = overlay.querySelector('.overlay-body');
+      content.classList.remove('slide-from-left', 'slide-from-right');
+
+      // 2) force a reflow so the browser can retrigger the animation
+      void content.offsetWidth;
+
+      // 3) add the new slide class
+      if (direction === 'left') {
+        content.classList.add('slide-from-left');
+      } else {
+        content.classList.add('slide-from-right');
+      }
+
+      // 4) finally show the overlay
+      overlay.classList.add('active');
+      currentIndex = index;
+    }
+
+    overlayPrev.addEventListener('click', () => {
+      let idx = currentIndex - 1;
+      if (idx < 0) idx = projectCards.length - 1;
+      openOverlay(idx, 'left');
+    });
+
+    overlayNext.addEventListener('click', () => {
+      let idx = currentIndex + 1;
+      if (idx >= projectCards.length) idx = 0;
+      openOverlay(idx, 'right');
+    });
+
+
+    (function () {
+      const eyes = [
+        { el: document.getElementById('eye-left'), radius: 8 },
+        { el: document.getElementById('eye-right'), radius: 8 }
+      ];
+
+      document.addEventListener('mousemove', evt => {
+        eyes.forEach(({ el, radius }) => {
+          // center of this eye
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          // vector to cursor
+          const dx = evt.clientX - cx;
+          const dy = evt.clientY - cy;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          // clamp to radius
+          const moveX = (dx / dist) * radius;
+          const moveY = (dy / dist) * radius;
+          // move the entire .eye (with its glint inside)
+          el.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
+      });
+    })();
+
+    // 1. Grab the .speech container, create exactly one <p>
+    const speech = document.querySelector(".speech");
+    const p = document.createElement("p");
+    speech.appendChild(p);
+
+    // 2. Your lines to show
+    const lines = [
+      "Scroll down and you'll see how I turn coffee and code into cool creations..",
+      "Hmmm, what project should I work on Next?",
+      "Every click here reveals a little more of what’s been cooking in my head.",
+      "Ideas turn into code, code turns into projects — that’s how my mind works..",
+      "Hey, loved my projects?? Wanna Collab?!!"
+    ];
+
+    // 3. Enhanced typeWriter (with callback)
+    function typeWriter(el, text, delay = 80, onComplete = () => { }) {
+      el.textContent = "";        // clear old text
+      let i = 0;
+      function _tick() {
+        if (i < text.length) {
+          el.textContent += text.charAt(i++);
+          setTimeout(_tick, delay);
+        } else {
+          onComplete();
+        }
+      }
+      _tick();
+    }
+
+    // 4. Show each line in sequence, waiting 5s after each
+    function displayNextMessage(index = 0) {
+      if (index >= lines.length) return;   // done
+      typeWriter(p, lines[index], 80, () => {
+        setTimeout(() => displayNextMessage(index + 1), 5000);
+      });
+    }
+
+    // 5. Kick it off on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded", () => {
+      displayNextMessage(0);
+    });
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eye-Tracking Character with Glint</title>
+  <style>
+    /* Container holding the character */
+    .character-container {
+      position: fixed;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 300px;  /* adjust to your image width */
+      height: auto;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    /* Base character image */
+    .character-container img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    /* The two pupils (with built-in white glint) */
+    .eye {
+      position: absolute;
+      width: 14.5px;   /* pupil diameter */
+      height: 16.5px;
+      background: black;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      overflow: hidden;  /* clip the glint inside */
+    }
+
+    /* the tiny white “sclera”/glint inside each pupil */
+    .eye .glint {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      /* position it in the upper-left corner of the pupil */
+      top: 3px;
+      left: 3px;
+    }
+
+    /* Position pupils over the character – tweak these */
+    #eye-left {
+      left: 123px;  
+      top: 86px;   
+    }
+    #eye-right {
+      left: 172px;
+      top: 94px;
+    }
+  </style>
+</head>
+<body>
+  <div class="character-container" id="char">
+    <img src="/img/About Us R.png" alt="Character" />
+    <div class="eye" id="eye-left">
+      <div class="glint"></div>
+    </div>
+    <div class="eye" id="eye-right">
+      <div class="glint"></div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const eyes = [
+        { el: document.getElementById('eye-left'),   radius: 8 },
+        { el: document.getElementById('eye-right'),  radius: 8 }
+      ];
+
+      document.addEventListener('mousemove', evt => {
+        eyes.forEach(({ el, radius }) => {
+          // center of this eye
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width  / 2;
+          const cy = rect.top  + rect.height / 2;
+          // vector to cursor
+          const dx = evt.clientX - cx;
+          const dy = evt.clientY - cy;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          // clamp to radius
+          const moveX = (dx / dist) * radius;
+          const moveY = (dy / dist) * radius;
+          // move the entire .eye (with its glint inside)
+          el.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
